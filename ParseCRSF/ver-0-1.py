@@ -30,14 +30,17 @@ def safe_read(ser, length):
     buffer = bytearray()
     timeout_start = time.time()
     timeout = 2  # Таймаут в секундах для чтения всего пакета
-    while len(buffer) < length:
-        time_left = timeout - (time.time() - timeout_start)
-        if time_left <= 0:
-            # Если вышло время ожидания
-            print("Timeout reached. Incomplete packet.")
-            return None
-        ser.timeout = time_left  # Устанавливаем таймаут для чтения
-        buffer += ser.read(length - len(buffer))
+    try:
+        while len(buffer) < length:
+            time_left = timeout - (time.time() - timeout_start)
+            if time_left <= 0:
+                print("Timeout reached. Incomplete packet.")
+                return None
+            ser.timeout = time_left
+            buffer += ser.read(length - len(buffer))
+    except serial.SerialException as e:
+        print(f"Ошибка чтения из порта: {e}")
+        return None
     return buffer
 
 # основная функция декодирования пакета - отпавпраляем все кроме начала и длины пакета
