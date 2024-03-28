@@ -2,8 +2,8 @@ import serial
 import time
 
 # Настройки подключения к приёмнику
-SERIAL_PORT = '/dev/usbserial-1110'
-BAUD_RATE = 420000  # Стандартная скорость при включении
+SERIAL_PORT = '/dev/cu.usbserial-1140'
+BAUD_RATE = 460200  # Стандартная скорость при включении
 
 # Параметры пакета данных
 CRSF_SYNC = 0xC8
@@ -38,22 +38,27 @@ def safe_read(ser, length):
 def read_crsf_serial(ser):
     print("Start reading")
     packet_count = 0
-    while packet_count < 5:
+    while packet_count < 500:
         # Читаем один байт
         start_byte = ser.read(1)
         if start_byte:
             # Проверяем, является ли этот байт началом пакета
             if isPacketStart(ord(start_byte)):
                 print("Found packet start with byte:", start_byte.hex())
+                print("Found packet start with byte not HEX:", start_byte)
 
                 # Нашли начало пакета данных
-                len_byte = safe_read(ser, 1)  # Безопасное чтение длины пакета
+                len_byte = ser.read(1) #safe_read(ser, 1)  # Безопасное чтение длины пакета
+                print(f"LEN Packet not hex = {int.from_bytes(len_byte, byteorder='big')}")
+                print(f"LEN Packet hex = {len_byte.hex()}")
                 if len_byte is None:
                     continue  # Пропускаем этот пакет, если не удалось прочитать длину
 
                 packet_length = ord(len_byte)
                 print(f"LEN Packet = {packet_length}")
-
+                type_pac = ser.read(1)
+                if type_pac == 0x08:
+                    print("YRRRRRARRARARARARRAR")
                 # Читаем оставшуюся часть пакета
                 remaining_packet = safe_read(ser, packet_length)
                 if remaining_packet is None:

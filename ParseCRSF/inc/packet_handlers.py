@@ -21,7 +21,28 @@ class PacketHandlers:
 
     @staticmethod
     def handle_linkstatistics_packet(packet):
-        print("пакет -  Signal information. Uplink/Downlink RSSI, SNR, Link Quality (LQ), RF mode, transmit power ")
+        #print("пакет -  Signal information. Uplink/Downlink RSSI, SNR, Link Quality (LQ), RF mode, transmit power ")
+        uplink_rssi_ant1 = packet[1] * -1
+        uplink_rssi_ant2 = packet[2] * -1
+        uplink_lq = packet[3]
+        uplink_snr = int.from_bytes(packet[4:5], byteorder='little', signed=True)
+        active_antenna = packet[5]
+        rf_mode = packet[6]
+        uplink_tx_power = packet[7]
+        downlink_rssi = packet[8] * -1
+        downlink_lq = packet[9]
+        downlink_snr = int.from_bytes(packet[10:11], byteorder='little', signed=True)
+
+        #print(f"Uplink RSSI Ant. 1: {uplink_rssi_ant1} dBm")
+        #print(f"Uplink RSSI Ant. 2: {uplink_rssi_ant2} dBm")
+        print(f"Uplink LQ: {uplink_lq}% -- RF Mode - {rf_mode} -- Uplink RSSI Ant. 1 - {uplink_rssi_ant1} -- Uplink RSSI Ant. 2 - {uplink_rssi_ant2}")
+        #print(f"Uplink SNR: {uplink_snr} dB")
+        #print(f"Diversity Active Antenna: {active_antenna} (0=Ant. 1, 1=Ant. 2)")
+        #print(f"RF Mode: {rf_mode}")
+        #print(f"Uplink TX Power: {uplink_tx_power}")
+        #print(f"Downlink RSSI: {downlink_rssi} dBm")
+        #print(f"Downlink LQ: {downlink_lq}%")
+        #print(f"Downlink SNR: {downlink_snr} dB")
 
     @staticmethod
     def handle_rcchannelspacked_packet(packet):
@@ -109,31 +130,10 @@ class PacketHandlers:
 
 # Словарь типов пакетов и соответствующих методов класса обработки
 packet_types = {
-    0x02: PacketHandlers.handle_gps_packet, # CRSF_FRAMETYPE_GPS
-    0x07: PacketHandlers.handle_vario_packet, # CRSF_FRAMETYPE_VARIO
-    0x08: PacketHandlers.handle_battery_packet, # CRSF_FRAMETYPE_BATTERY_SENSOR
-    0x09: PacketHandlers.handle_baroattitude_packet, # CRSF_FRAMETYPE_BARO_ALTITUDE
-    0x0B: PacketHandlers.handle_heartbeat_packet, # CRSF_FRAMETYPE_HEARTBEAT
-    0x14: PacketHandlers.handle_linkstatistics_packet, # CRSF_FRAMETYPE_LINK_STATISTICS
-    0x16: PacketHandlers.handle_rcchannelspacked_packet, # CRSF_FRAMETYPE_RC_CHANNELS_PACKED
-    0x17: PacketHandlers.handle_subsetrcchannelspacked_packet, # CRSF_FRAMETYPE_SUBSET_RC_CHANNELS_PACKED
-    0x1C: PacketHandlers.handle_linkrxid_packet, # CRSF_FRAMETYPE_LINK_RX_ID
-    0x1D: PacketHandlers.handle_linktxid_packet, # CRSF_FRAMETYPE_LINK_TX_ID
-    0x1E: PacketHandlers.handle_attitude_packet, # CRSF_FRAMETYPE_ATTITUDE
-    0x21: PacketHandlers.handle_flightmode_packet, # CRSF_FRAMETYPE_FLIGHT_MODE
-    0x28: PacketHandlers.handle_deviceping_packet, # CRSF_FRAMETYPE_DEVICE_PING
-    0x29: PacketHandlers.handle_deviceinfo_packet, # CRSF_FRAMETYPE_DEVICE_INFO
-    0x2B: PacketHandlers.handle_parametersettingentry_packet, # CRSF_FRAMETYPE_PARAMETER_SETTINGS_ENTRY
-    0x2C: PacketHandlers.handle_parameterread_packet, # CRSF_FRAMETYPE_PARAMETER_READ
-    0x2D: PacketHandlers.handle_parameterwrite_packet, # CRSF_FRAMETYPE_PARAMETER_WRITE
-    0x2E: PacketHandlers.handle_elrsstatus_packet, # CRSF_FRAMETYPE_ELRS_STATUS
-    0x32: PacketHandlers.handle_command_packet, # CRSF_FRAMETYPE_COMMAND
-    0x3A: PacketHandlers.handle_radioid_packet, # CRSF_FRAMETYPE_RADIO_ID
-    0x78: PacketHandlers.handle_kissreq_packet, # CRSF_FRAMETYPE_KISS_REQ
-    0x79: PacketHandlers.handle_kissresp_packet, # CRSF_FRAMETYPE_KISS_RESP
-    0x7A: PacketHandlers.handle_mspreq_packet, # CRSF_FRAMETYPE_MSP_REQ
-    0x7B: PacketHandlers.handle_mspresp_packet, # CRSF_FRAMETYPE_MSP_RESP
-    0x7C: PacketHandlers.handle_mspwrite_packet, # CRSF_FRAMETYPE_MSP_WRITE
-    0x7D: PacketHandlers.handle_displayportcmd_packet, # CRSF_FRAMETYPE_DISPLAYPORT_CMD
-    0x80: PacketHandlers.handle_ardupilotresp_packet # CRSF_FRAMETYPE_ARDUPILOT_RESP
+    #2: PacketHandlers.handle_gps_packet, # CRSF_FRAMETYPE_GPS
+    #7: PacketHandlers.handle_vario_packet, # CRSF_FRAMETYPE_VARIO
+    #8: PacketHandlers.handle_battery_packet, # CRSF_FRAMETYPE_BATTERY_SENSOR
+    #9: PacketHandlers.handle_baroattitude_packet, # CRSF_FRAMETYPE_BARO_ALTITUDE
+    #11: PacketHandlers.handle_heartbeat_packet, # CRSF_FRAMETYPE_HEARTBEAT
+    20: PacketHandlers.handle_linkstatistics_packet, # CRSF_FRAMETYPE_LINK_STATISTICS
 }
